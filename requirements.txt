@@ -1,0 +1,5 @@
+mediapipe == 0.8.10
+numpy == 1.21.6
+opencv_python == 4.5.5.64
+protobuf == 3.20.1
+pybboxes == 0.0.2
