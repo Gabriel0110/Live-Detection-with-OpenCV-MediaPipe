@@ -19,11 +19,8 @@ class FaceDetector:
 
     def get_face_data(self):
         """
-        It takes an image as input, and returns a list of hand landmarks and a list of hand types (right
-        or left)
-        
-        :param image: The image to be processed
-        :return: the hand data and the hand type.
+        The function takes an image, converts it to RGB, passes it to the face detector,
+        and then draws a bounding box around the face.
         """
 
         # To improve performance, mark the image as not writeable to pass by reference.
@@ -32,7 +29,7 @@ class FaceDetector:
         results = self.face.process(imageRGB)
 
         self.image.flags.writeable = True
-        imageRGB = cv2.cvtColor(self.image, cv2.COLOR_RGB2BGR)
+        
         if results.detections:
             for detection in results.detections:
                 self.face_bounding_box_coords = MessageToDict(detection)['locationData']['relativeBoundingBox']

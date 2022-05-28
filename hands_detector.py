@@ -177,7 +177,6 @@ class HandsDetector:
 
         # Draw the hand annotations on the image.
         self.image.flags.writeable = True
-        imageRGB = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
 
         # Check if any hands are detected
         if results.multi_hand_landmarks:
