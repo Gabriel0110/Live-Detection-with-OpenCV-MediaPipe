@@ -26,8 +26,9 @@ class HandsDetector:
             "wrist_position": None,
             }
 
-        # Settings to turn on/off pinch detection and bounding box for hands
-        self.PINCH_COMMAND_ON = True
+        # Settings to turn on/off commands
+        self.INDEX_TOUCH_COMMAND_ON = True
+        self.PINCH_COMMAND_ON = False
         self.BOUNDING_BOX_ON = True
 
     def load_image(self, image):
@@ -109,6 +110,23 @@ class HandsDetector:
             dist = np.linalg.norm(np.array(right_thumb) - np.array(right_index))
             if dist < 10:
                 print("PINCH DETECTED - exiting...")
+                exit()
+
+    def index_tip_touch_check(self):
+        """
+        If the distance between both index fingers is less than 10 pixels, exit the program
+        """
+        left_index = self.left_hand_landmarks["index_tip_position"]
+        right_index = self.right_hand_landmarks["index_tip_position"]
+
+        # Calculate the distance between both index finger tips and draw a line between them
+        if left_index and right_index:
+            cv2.line(self.image, left_index, right_index, (0, 0, 255), 2)
+
+            # Exit if euclidean distance between both index finger tips is less than 10 pixels
+            dist = np.linalg.norm(np.array(left_index) - np.array(right_index))
+            if dist < 10:
+                print("INDEX TIP TOUCH DETECTED - exiting...")
                 exit()
     
     def update_landmark_positions(self, hand_data, hand_type):

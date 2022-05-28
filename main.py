@@ -23,7 +23,10 @@ if __name__ == "__main__":
             hands.load_image(image)
             hands_data, hands_type = hands.get_hand_data()
 
+            # Do things with the hands (command checking, etc)
             for hand_data, hand_type in zip(hands_data, hands_type):
+                if hands.INDEX_TOUCH_COMMAND_ON:
+                    hands.index_tip_touch_check()
                 if hands.PINCH_COMMAND_ON:
                     hands.pinch_check()
                 if hands.BOUNDING_BOX_ON:
