@@ -15,9 +15,6 @@ if __name__ == "__main__":
         hands = HandsDetector()
     if DETECT_FACE:
         face = FaceDetector()
-    
-    cv2_img_coords = []
-    face_bounding_box_coords = {}
 
     while True:
         success, image = cam.read()
@@ -40,7 +37,7 @@ if __name__ == "__main__":
         cv2.imshow("Output", image)
 
         if cv2.waitKey(1) & 0xFF == ord('p'):
-            new_img = image[cv2_img_coords[1]:cv2_img_coords[3], cv2_img_coords[0]:cv2_img_coords[2]]
+            new_img = image[face.cv2_img_coords[1]:face.cv2_img_coords[3], face.cv2_img_coords[0]:face.cv2_img_coords[2]]
             cv2.imwrite(f'face_detection{str(time.time()).split(".")[0]}.jpg', new_img)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
