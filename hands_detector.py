@@ -27,7 +27,7 @@ class HandsDetector:
             }
 
         # Settings to turn on/off commands
-        self.INDEX_TOUCH_COMMAND_ON = True
+        self.INDEX_TOUCH_COMMAND_ON = False
         self.PINCH_COMMAND_ON = False
         self.BOUNDING_BOX_ON = True
 
