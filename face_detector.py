@@ -41,7 +41,7 @@ class FaceDetector:
                 height = self.face_bounding_box_coords['height']
 
                 # Covert the YOLO bounding box coordinates to the original image dimensions
-                converted_coords = pbx.convert_bbox((xmin, ymin, width, height), from_type="yolo", to_type="voc", image_width=W, image_height=H)
+                converted_coords = pbx.convert_bbox((xmin, ymin, width, height), from_type="yolo", to_type="voc", image_width=W, image_height=H, strict=False)
                 x = converted_coords[0]+42
                 y = converted_coords[1]+42
                 w = converted_coords[2]+42
@@ -50,3 +50,6 @@ class FaceDetector:
 
                 # Create a bounding box around the face
                 cv2.rectangle(self.image, (x, y), (w, h), (0, 255, 0), 2)
+
+    def set_model_confidence(self, value):
+        self.face = mp.solutions.face_detection.FaceDetection(min_detection_confidence=value)

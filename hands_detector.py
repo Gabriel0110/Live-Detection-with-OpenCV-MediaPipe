@@ -175,6 +175,13 @@ class HandsDetector:
                 elif hand_type == "Right":
                     self.right_hand_landmarks["wrist_position"] = (cx, cy)
 
+    
+    def set_model_confidence(self, value):
+        """
+        This function sets the model confidence value to the value passed in.
+        """
+        self.hands = mp.solutions.hands.Hands(min_detection_confidence=value)
+
 
     def get_hand_data(self):
         """

@@ -1,5 +1,6 @@
+from turtle import width
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QWidget, QApplication, QLabel, QVBoxLayout, QPushButton, QCheckBox, QHBoxLayout, QFileDialog
+from PyQt5.QtWidgets import QWidget, QApplication, QLabel, QVBoxLayout, QPushButton, QCheckBox, QSlider, QGridLayout, QTabWidget
 from PyQt5.QtGui import QPixmap
 import sys
 import cv2
@@ -79,28 +80,98 @@ class App(QWidget):
         self.pinchCheckBox.setChecked(False)
         self.pinchCheckBox.stateChanged.connect(self.toggle_pinch_command)
 
-        # Create a horizontal layout to hold two vertical layouts
-        hbox = QHBoxLayout()
-        vbox1 = QVBoxLayout()
-        vbox2 = QVBoxLayout()
-        vbox1.addWidget(self.image_label)
-        vbox1.addWidget(self.textLabel)
-        vbox1.addWidget(self.camButton)
-        vbox1.addWidget(self.faceCheckBox)
-        vbox1.addWidget(self.handCheckBox)
-        vbox1.addWidget(self.indexTipTouchCheckBox)
-        vbox1.addWidget(self.pinchCheckBox)
-        hbox.addLayout(vbox1)
-        hbox.addLayout(vbox2)
+        # create slider for face model confidence
+        self.faceModelConfidenceLabel = QLabel('Face Model Min. Confidence')
+        self.faceModelConfidenceSlider = QSlider(Qt.Horizontal)
+        self.faceModelConfidenceSlider.setFixedWidth(150)
+        self.faceModelConfidenceSlider.setMinimum(0)
+        self.faceModelConfidenceSlider.setMaximum(100)
+        self.faceModelConfidenceSlider.setValue(50)
+        self.faceModelConfidenceSlider.setTickPosition(QSlider.TicksBelow)
+        self.faceModelConfidenceSlider.setTickInterval(10)
+        self.faceModelConfidenceSlider.setSingleStep(10)
+        self.faceModelConfidenceSlider.setPageStep(10)
+        self.faceModelConfidenceSlider.setToolTip('Face Model Min. Confidence')
+        self.faceModelConfidenceSlider.valueChanged.connect(self.set_face_model_confidence)
+        self.faceModelConfidenceValueLabel = QLabel('0.5')
+
+        # create slider for hand model confidence
+        self.handModelConfidenceLabel = QLabel('Hand Model Min. Confidence')
+        self.handModelConfidenceSlider = QSlider(Qt.Horizontal)
+        self.handModelConfidenceSlider.setFixedWidth(150)
+        self.handModelConfidenceSlider.setMinimum(0)
+        self.handModelConfidenceSlider.setMaximum(100)
+        self.handModelConfidenceSlider.setValue(50)
+        self.handModelConfidenceSlider.setTickPosition(QSlider.TicksBelow)
+        self.handModelConfidenceSlider.setTickInterval(10)
+        self.handModelConfidenceSlider.setSingleStep(10)
+        self.handModelConfidenceSlider.setPageStep(10)
+        self.handModelConfidenceSlider.setToolTip('Hand Model Min. Confidence')
+        self.handModelConfidenceSlider.valueChanged.connect(self.set_hand_model_confidence)
+        self.handModelConfidenceValueLabel = QLabel('0.5')
+
+        # create tab widget with two tabs for detections and parameters
+        tabs = QTabWidget()
+        tabs.addTab(self.detections_tab_UI(), 'Detections')
+        tabs.addTab(self.parameters_tab_UI(), 'Parameters')
+
+        # create layouts and add widgets/layouts to them
+        vbox_main = QVBoxLayout()
+        vbox_top = QVBoxLayout()
+        vbox_bottom = QGridLayout()
+
+        vbox_top.addWidget(self.image_label)
+        vbox_top.addWidget(self.textLabel)
+        vbox_top.addWidget(self.camButton)
+        vbox_bottom.addWidget(tabs)
+
+        vbox_main.addLayout(vbox_top)
+        vbox_main.addLayout(vbox_bottom)
 
         # set the vbox layout as the widgets layout
-        self.setLayout(hbox)
+        self.setLayout(vbox_main)
 
         # create the video capture thread
         self.thread = VideoThread()
 
         # connect its signal to the update_image slot
         self.thread.change_pixmap_signal.connect(self.update_image)
+
+    def detections_tab_UI(self):
+        """It creates a tab in a tab widget, and adds the checkboxes to it."""
+        detectionsTab = QWidget()
+        detectionsTabLayout = QVBoxLayout()
+        detectionsTabLayout.addWidget(self.faceCheckBox)
+        detectionsTabLayout.addWidget(self.handCheckBox)
+        detectionsTabLayout.addWidget(self.indexTipTouchCheckBox)
+        detectionsTabLayout.addWidget(self.pinchCheckBox)
+        detectionsTab.setLayout(detectionsTabLayout)
+        return detectionsTab
+
+    def parameters_tab_UI(self):
+        """It creates a tab in a tab widget, and adds the sliders to it."""
+        parametersTab = QWidget()
+        parametersTabLayout = QVBoxLayout()
+        parametersTabLayout.addWidget(self.faceModelConfidenceLabel)
+        parametersTabLayout.addWidget(self.faceModelConfidenceSlider)
+        parametersTabLayout.addWidget(self.faceModelConfidenceValueLabel)
+        parametersTabLayout.addWidget(self.handModelConfidenceLabel)
+        parametersTabLayout.addWidget(self.handModelConfidenceSlider)
+        parametersTabLayout.addWidget(self.handModelConfidenceValueLabel)
+        parametersTab.setLayout(parametersTabLayout)
+        return parametersTab
+
+    def set_face_model_confidence(self, value):
+        """Scales the slider value before updating the model and setting the label"""
+        scaledValue = float(value) / 100
+        self.face.set_model_confidence(scaledValue)
+        self.faceModelConfidenceValueLabel.setText(str(scaledValue))
+
+    def set_hand_model_confidence(self, value):
+        """Scales the slider value before updating the model and setting the label"""
+        scaledValue = float(value) / 100
+        self.hands.set_model_confidence(scaledValue)
+        self.handModelConfidenceValueLabel.setText(str(scaledValue))
 
     def toggle_hand_detection(self):
         self.DETECT_HANDS = not self.DETECT_HANDS
@@ -115,6 +186,7 @@ class App(QWidget):
         self.hands.PINCH_COMMAND_ON = not self.hands.PINCH_COMMAND_ON
 
     def toggle_webcam(self):
+        """Toggles the webcam on or off"""
         if self.thread._run_flag == False:
             # Set the flag to true and start the thread
             self.thread._run_flag = True
