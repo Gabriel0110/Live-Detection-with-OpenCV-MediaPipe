@@ -35,9 +35,7 @@ class HandsDetector:
         self.image = image
 
     def reset_landmarks(self):
-        """
-        This function resets the landmarks of the left and right hand to None
-        """
+        """This function resets the landmarks of the left and right hand to None"""
 
         self.left_hand_landmarks = {
             "thumb_tip_position": None,
@@ -57,11 +55,7 @@ class HandsDetector:
             }
 
     def bounding_box(self, hand_type):
-        """
-        Draw a bounding box around the hand(s)
-        
-        :param hand_type: The type of hand you want to draw the bounding box around
-        """
+        """Draw a bounding box around the hand(s)"""
 
         # Draw a rectangle with cv2 around the hand if the positions are not None
         # The text is opposite of what mediapipe says because it's inverted
@@ -84,9 +78,7 @@ class HandsDetector:
                 cv2.putText(self.image, "Left Hand", (right_middle[0] - 80, right_middle[1] - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
     def pinch_check(self):
-        """
-        If the distance between the thumb and index finger tips is less than 10 pixels, exit the program
-        """
+        """If the distance between the thumb and index finger tips is less than 10 pixels, exit the program"""
 
         left_thumb = self.left_hand_landmarks["thumb_tip_position"]
         right_thumb = self.right_hand_landmarks["thumb_tip_position"]
@@ -113,9 +105,8 @@ class HandsDetector:
                 exit()
 
     def index_tip_touch_check(self):
-        """
-        If the distance between both index fingers is less than 10 pixels, exit the program
-        """
+        """If the distance between both index fingers is less than 10 pixels, exit the program"""
+
         left_index = self.left_hand_landmarks["index_tip_position"]
         right_index = self.right_hand_landmarks["index_tip_position"]
 
@@ -130,13 +121,8 @@ class HandsDetector:
                 exit()
     
     def update_landmark_positions(self, hand_data, hand_type):
-        """
-        This function takes in the hand data and hand type and updates the hand landmarks dictionary
-        with the new positions of the hand landmarks.
-        
-        :param hand_data: a list of tuples containing the landmark index, x, and y coordinates
-        :param hand_type: "Left" or "Right"
-        """
+        """This function takes in the hand data and hand type and updates the hand landmarks dictionary
+        with the new positions of the hand landmarks."""
 
         for (idx, cx, cy) in hand_data:
             if idx == mp.solutions.hands.HandLandmark.THUMB_TIP:
@@ -177,20 +163,14 @@ class HandsDetector:
 
     
     def set_model_confidence(self, value):
-        """
-        This function sets the model confidence value to the value passed in.
-        """
+        """This function sets the model confidence value to the value passed in."""
+
         self.hands = mp.solutions.hands.Hands(min_detection_confidence=value)
 
 
     def get_hand_data(self):
-        """
-        It takes an image as input, and returns a list of hand landmarks and a list of hand types (right
-        or left)
-        
-        :param image: The image to be processed
-        :return: the hand data and the hand type.
-        """
+        """It takes an image as input, and returns a list of hand landmarks and a list of hand types (right
+        or left)"""
 
         hands_data = []
         hands_type = []
