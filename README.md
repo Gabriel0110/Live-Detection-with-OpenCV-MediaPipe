@@ -7,5 +7,8 @@ My plan is to add more features to the GUI version, including screenshots and im
 
 Thanks to docPhil99 (https://gist.github.com/docPhil99/ca4da12c9d6f29b9cea137b617c7b8b1) for help getting the GUI setup via PyQT, as streaming OpenCV video to QT requires a bit of tinkering with multithreading.
 
+To-do:
+- Manually build out the Iris detection feature within the mediapipe package (https://github.com/google/mediapipe/issues/1530#issuecomment-790210796)
+
 ## Demo of GUI version
 https://user-images.githubusercontent.com/25640614/171034357-d4fa8a91-5c9b-44ea-b9e5-c65cfcb28a67.mp4
